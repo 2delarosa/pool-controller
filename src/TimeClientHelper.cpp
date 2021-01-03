@@ -5,22 +5,26 @@
 #include "TimeClientHelper.hpp"
 
 // NTP Client
-const char *TC_SERVER = "europe.pool.ntp.org";
+const char *TC_SERVER = "us.pool.ntp.org";
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, TC_SERVER);
 
 // For starters use hardwired Central European Time (Berlin, Paris, ...)
-TimeChangeRule CEST = {"CEST", Last, Sun, Mar, 2, 120}; // Central European Summer Time
-TimeChangeRule CET = {"CET ", Last, Sun, Oct, 3, 60};   // Central European Standard Time
-Timezone Europe(CEST, CET);
+TimeChangeRule usPDT = {"PDT", Second, Sun, Mar, 2, -420};  //UTC - 7 hours
+TimeChangeRule usPST = {"PST", First, Sun, Nov, 2, -480};   //UTC - 8 hours
+Timezone usPacific(usPDT, usPST);
+
+//TimeChangeRule CEST = {"CEST", Last, Sun, Mar, 2, 120}; // Central European Summer Time
+//TimeChangeRule CET = {"CET ", Last, Sun, Oct, 3, 60};   // Central European Standard Time
+//Timezone Europe(CEST, CET);
 
 // Japanese Time Zone (Tokyo)
 TimeChangeRule JPST = {"JST", First, Sun, Mar, 0, 9 * 60}; // UTC + 9 hours
 Timezone Japan(JPST, JPST);
 
 TimeZoneInfo _timezones[2] = {
-  { "Berlin", &Europe },
+  {"Los Angeles", &usPacific},
   {"Tokyo", &Japan}
 };
 
