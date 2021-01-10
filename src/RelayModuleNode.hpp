@@ -41,8 +41,8 @@ private:
   const char* cSwitch      = "switch";
   const char* cSwitchName  = "Switch";
 
-  const char* cFlagOn  = "true";
-  const char* cFlagOff = "false";
+  const char* cFlagOn  = "false";
+  const char* cFlagOff = "true";
 
   const char* cHomieNodeState      = "state";
   const char* cHomieNodeStateName  = "State";
