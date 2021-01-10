@@ -132,11 +132,11 @@ void setup() {
     return (candidate >= 0) && (candidate <= 300);
   });
 
-  temperatureMaxPoolSetting.setDefaultValue(28.5).setValidator(
-      [](long candidate) { return (candidate >= 0) && (candidate <= 30); });
-
-  temperatureMinSolarSetting.setDefaultValue(55.0).setValidator(
+  temperatureMaxPoolSetting.setDefaultValue(75.5).setValidator(
       [](long candidate) { return (candidate >= 0) && (candidate <= 100); });
+
+  temperatureMinSolarSetting.setDefaultValue(100.0).setValidator(
+      [](long candidate) { return (candidate >= 0) && (candidate <= 120); });
 
   temperatureHysteresisSetting.setDefaultValue(1.0).setValidator(
       [](long candidate) { return (candidate >= 0) && (candidate <= 10); });
