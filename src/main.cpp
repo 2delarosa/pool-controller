@@ -30,11 +30,11 @@ const uint8_t PIN_RELAY_SOLAR = 19;
 #elif defined(ESP8266)
 
 // see: https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
-const uint8_t PIN_DS_SOLAR = D5;  // Pin of Temp-Sensor Solar
+const uint8_t PIN_DS_SOLAR = D3;  // Pin of Temp-Sensor Solar
 const uint8_t PIN_DS_POOL  = D4;  // Pin of Temp-Sensor Pool
 
-const uint8_t PIN_RELAY_POOL  = D1;
-const uint8_t PIN_RELAY_SOLAR = D2;
+const uint8_t PIN_RELAY_POOL  = D2;
+const uint8_t PIN_RELAY_SOLAR = D1;
 #endif
 const uint8_t TEMP_READ_INTERVALL = 30;  //Sekunden zwischen Updates der Temperaturen.
 
