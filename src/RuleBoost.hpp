@@ -20,6 +20,6 @@ protected:
   RelayModuleNode* _poolRelay;
 
 private:
-  const char* cCaption = "• RuleBoost:";
+  const char* cCaption = "RuleBoost:";
   const char* cIndent  = "  ◦ ";
 };

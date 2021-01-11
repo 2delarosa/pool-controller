@@ -23,6 +23,6 @@ private:
   RelayModuleNode* _solarRelay;
   RelayModuleNode* _poolRelay;
 
-  const char* cCaption = "• RuleTimer:";
+  const char* cCaption = "RuleTimer:";
   const char* cIndent  = "  ◦ ";
 };
