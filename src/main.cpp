@@ -64,8 +64,8 @@ RelayModuleNode poolPumpNode("pool-pump", "Pool Pump", PIN_RELAY_POOL);
 RelayModuleNode solarPumpNode("solar-pump", "Solar Pump", PIN_RELAY_SOLAR);
 RelayModuleNode poolLightNode("pool-lights", "Pool Lights", PIN_RELAY_PLIGHTS);
 RelayModuleNode poolHeaterNode("pool-heater", "Heater", PIN_RELAY_HEATER);
-RelayModuleNode poolSuctionNode("valve-suction", "Suction", PIN_RELAY_SUCTION);
-RelayModuleNode poolReturnNode("valve-return", "Return ", PIN_RELAY_RETURN);
+RelayModuleNode poolSuctionNode("pool-suction", "Suction", PIN_RELAY_SUCTION);
+RelayModuleNode poolReturnNode("pool-return", "Return ", PIN_RELAY_RETURN);
 
 OperationModeNode operationModeNode("operation-mode", "Operation Mode");
 
