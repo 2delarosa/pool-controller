@@ -35,6 +35,10 @@ const uint8_t PIN_DS_POOL  = D4;  // Pin of Temp-Sensor Pool
 
 const uint8_t PIN_RELAY_POOL  = D2;
 const uint8_t PIN_RELAY_SOLAR = D1;
+const uint8_t PIN_RELAY_PLIGHTS = D5;
+const uint8_t PIN_RELAY_HEATER = D6;
+const uint8_t PIN_RELAY_SUCTION = D7;
+const uint8_t PIN_RELAY_RETURN = D8;
 #endif
 const uint8_t TEMP_READ_INTERVALL = 30;  //Sekunden zwischen Updates der Temperaturen.
 
@@ -56,6 +60,10 @@ ESP32TemperatureNode ctrlTemperatureNode("controller-temp", "Controller Temperat
 #endif
 RelayModuleNode poolPumpNode("pool-pump", "Pool Pump", PIN_RELAY_POOL);
 RelayModuleNode solarPumpNode("solar-pump", "Solar Pump", PIN_RELAY_SOLAR);
+RelayModuleNode PoolLightNode("pool-lights", "Pool Lights", PIN_RELAY_PLIGHTS);
+RelayModuleNode PoolHeaterNode("pool-heater", "Heater", PIN_RELAY_HEATER);
+RelayModuleNode PoolSuctionNode("valve-suction", "Suction", PIN_RELAY_SUCTION);
+RelayModuleNode PoolReturnNode("valve-return", "Return ", PIN_RELAY_RETURN);
 
 OperationModeNode operationModeNode("operation-mode", "Operation Mode");
 
