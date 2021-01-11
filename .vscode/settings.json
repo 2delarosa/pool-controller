@@ -6,5 +6,6 @@
     "prettier.printWidth": 130,
     "files.associations": {
         "functional": "cpp"
-    }
+    },
+    "C_Cpp.dimInactiveRegions": false
 }

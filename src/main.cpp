@@ -55,15 +55,17 @@ LoggerNode LN;
 
 DallasTemperatureNode solarTemperatureNode("solar-temp", "Solar Temperature", PIN_DS_SOLAR, TEMP_READ_INTERVALL);
 DallasTemperatureNode poolTemperatureNode("pool-temp", "Pool Temperature", PIN_DS_POOL, TEMP_READ_INTERVALL);
+
 #ifdef ESP32
 ESP32TemperatureNode ctrlTemperatureNode("controller-temp", "Controller Temperature", TEMP_READ_INTERVALL);
 #endif
+
 RelayModuleNode poolPumpNode("pool-pump", "Pool Pump", PIN_RELAY_POOL);
 RelayModuleNode solarPumpNode("solar-pump", "Solar Pump", PIN_RELAY_SOLAR);
-RelayModuleNode PoolLightNode("pool-lights", "Pool Lights", PIN_RELAY_PLIGHTS);
-RelayModuleNode PoolHeaterNode("pool-heater", "Heater", PIN_RELAY_HEATER);
-RelayModuleNode PoolSuctionNode("valve-suction", "Suction", PIN_RELAY_SUCTION);
-RelayModuleNode PoolReturnNode("valve-return", "Return ", PIN_RELAY_RETURN);
+RelayModuleNode poolLightNode("pool-lights", "Pool Lights", PIN_RELAY_PLIGHTS);
+RelayModuleNode poolHeaterNode("pool-heater", "Heater", PIN_RELAY_HEATER);
+RelayModuleNode poolSuctionNode("valve-suction", "Suction", PIN_RELAY_SUCTION);
+RelayModuleNode poolReturnNode("valve-return", "Return ", PIN_RELAY_RETURN);
 
 OperationModeNode operationModeNode("operation-mode", "Operation Mode");
 
@@ -84,6 +86,10 @@ void setupHandler() {
 
   poolPumpNode.setMeasurementInterval(_loopInterval);
   solarPumpNode.setMeasurementInterval(_loopInterval);
+  poolLightNode.setMeasurementInterval(_loopInterval);
+  poolHeaterNode.setMeasurementInterval(_loopInterval);
+  poolSuctionNode.setMeasurementInterval(_loopInterval);
+  poolReturnNode.setMeasurementInterval(_loopInterval);
 
 #ifdef ESP32
   ctrlTemperatureNode.setMeasurementInterval(_loopInterval);
