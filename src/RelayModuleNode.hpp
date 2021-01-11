@@ -35,7 +35,7 @@ private:
   static const int MIN_INTERVAL         = 60;  // in seconds
   static const int MEASUREMENT_INTERVAL = 300;
 
-  const char* cCaption = "Relay Module:";
+  const char* cCaption = "• Relay Module:";
   const char* cIndent  = "  ◦ ";
 
   const char* cSwitch      = "switch";

@@ -124,8 +124,8 @@ void RelayModuleNode::setup() {
 
   //restore from preferences
   if (storedSwitchValue) {
-    relay->off();
-  } else {
     relay->on();
+  } else {
+    relay->off();
   }
 }
