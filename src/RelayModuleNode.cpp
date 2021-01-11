@@ -119,7 +119,7 @@ void RelayModuleNode::setup() {
   // Close the Preferences
   preferences.end();
 #elif defined(ESP8266)
-  boolean storedSwitchValue = false;
+  boolean storedSwitchValue = true;
 #endif
 
   //restore from preferences
