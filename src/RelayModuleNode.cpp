@@ -110,8 +110,9 @@ void RelayModuleNode::setup() {
 
   advertise(cSwitch).setName(cSwitchName).setDatatype("boolean").settable();
   advertise(cHomieNodeState).setName(cHomieNodeStateName).setDatatype("string");
-
-  relay = new RelayModule(_pin);
+  
+  boolean INVERT_SIGNAL = true;
+  relay = new RelayModule(_pin, INVERT_SIGNAL); // The second parameter is whether to invert the signal
 
 #ifdef ESP32
   preferences.begin(getId(), false);
@@ -119,7 +120,7 @@ void RelayModuleNode::setup() {
   // Close the Preferences
   preferences.end();
 #elif defined(ESP8266)
-  boolean storedSwitchValue = true;
+  boolean storedSwitchValue = false;
 #endif
 
   //restore from preferences
