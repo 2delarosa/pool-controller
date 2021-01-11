@@ -149,7 +149,7 @@ void setup() {
   temperatureHysteresisSetting.setDefaultValue(1.0).setValidator(
       [](long candidate) { return (candidate >= 0) && (candidate <= 10); });
 
-  operationModeSetting.setDefaultValue("auto").setValidator([](const char* candidate) {
+  operationModeSetting.setDefaultValue("manu").setValidator([](const char* candidate) {
     return (strcmp(candidate, "auto")) || (strcmp(candidate, "manu")) || (strcmp(candidate, "boost"));
   });
 
