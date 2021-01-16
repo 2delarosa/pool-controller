@@ -16,6 +16,7 @@
 #include "RuleAuto.hpp"
 #include "RuleBoost.hpp"
 #include "RuleTimer.hpp"
+#include "ContactNode.hpp"
 
 #include "LoggerNode.hpp"
 #include "TimeClientHelper.hpp"
@@ -39,6 +40,8 @@ const uint8_t PIN_RELAY_PLIGHTS = D5;
 const uint8_t PIN_RELAY_HEATER = D6;
 const uint8_t PIN_RELAY_SUCTION = D7;
 const uint8_t PIN_RELAY_RETURN = D8;
+const uint8_t PIN_CONTACT = RX; // GPIO 3
+
 #endif
 const uint8_t TEMP_READ_INTERVALL = 30;  //Sekunden zwischen Updates der Temperaturen.
 
@@ -67,6 +70,8 @@ RelayModuleNode poolHeaterNode("pool-heater", "Heater", PIN_RELAY_HEATER);
 RelayModuleNode poolSuctionNode("pool-suction", "Suction", PIN_RELAY_SUCTION);
 RelayModuleNode poolReturnNode("pool-return", "Return ", PIN_RELAY_RETURN);
 
+ContactNode contactNode("waterflow", "Water Flow", PIN_CONTACT);
+
 OperationModeNode operationModeNode("operation-mode", "Operation Mode");
 
 unsigned long _measurementInterval = 10;
@@ -90,6 +95,8 @@ void setupHandler() {
   poolHeaterNode.setMeasurementInterval(_loopInterval);
   poolSuctionNode.setMeasurementInterval(_loopInterval);
   poolReturnNode.setMeasurementInterval(_loopInterval);
+
+//  contactNode.setMeasurementInterval(_loopInterval);
 
 #ifdef ESP32
   ctrlTemperatureNode.setMeasurementInterval(_loopInterval);
