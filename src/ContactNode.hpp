@@ -18,6 +18,8 @@ class ContactNode : public SensorNode
 {
 public:
   typedef std::function<void(bool)> TContactCallback;
+  explicit ContactNode(const char *id, const char *name, const int contactPin = DEFAULTPIN, TContactCallback contactCallback = NULL);
+  void onChange(TContactCallback contactCallback);
 
 private:
   const char *cCaption = "• %s contact pin[%d]:";
@@ -41,7 +43,4 @@ protected:
   virtual void setupPin();
   virtual byte readPin();
 
-public:
-  explicit ContactNode(const char *id, const char *name, const int contactPin = DEFAULTPIN, TContactCallback contactCallback = NULL);
-  void onChange(TContactCallback contactCallback);
 };
