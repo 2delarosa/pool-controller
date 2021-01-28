@@ -25,8 +25,10 @@ protected:
   void loop() override;
   
 private:
+  // Total number of Sensors
+  static const uint8_t MAX_NUM_SENSORS = 4;  
+
   // suggested rate is 1/60Hz (1m)
-  static const uint8_t MAX_NUM_SENSORS  = 4;   // Total number of Sensors
   static const int MIN_INTERVAL         = 60;  // in seconds
   static const int MEASUREMENT_INTERVAL = 300;
 

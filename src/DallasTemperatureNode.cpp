@@ -68,7 +68,7 @@ void DallasTemperatureNode::classInitializer(const uint8_t pin, const int measur
 
     // Grab a count of devices on the wire
     numberOfDevices = sensor->getDeviceCount();
-    if (numberOfDevices > MAX_NUM_SENSORS || (isRange() && (numberOfDevices > _rangeCount))) {
+    if (numberOfDevices > MAX_NUM_SENSORS) {
       numberOfDevices = MAX_NUM_SENSORS;
     }
 
