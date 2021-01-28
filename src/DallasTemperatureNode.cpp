@@ -54,13 +54,18 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
   }
 
 /**
- * Called by Class Constructors
+ * Called by HomieSetup() and HomieLoop() as needed
+ * - HomieSetup is not ONLINE, so no sends or adverts
  */
   void DallasTemperatureNode::initializeSensors() {
     // Grab a count of devices on the wire
+    // Constrain count to range, if range
     numberOfDevices = sensor->getDeviceCount();
     if (numberOfDevices > MAX_NUM_SENSORS) {
       numberOfDevices = MAX_NUM_SENSORS;
+    }
+    if ((numberOfDevices > 0) && isRange() && (numberOfDevices > _rangeCount)) {
+      numberOfDevices = _rangeCount;
     }
 
     // report parasite power requirements
@@ -73,7 +78,10 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
         // Load the address list sequence
         if (sensor->getAddress(deviceAddress[i], i)) {
           String adr = address2String(deviceAddress[i]);
-          Homie.getLogger() << cIndent << F("PIN ") << _pin << F(": ") << F("Device ") << i << F(" using address ") << adr
+          Homie.getLogger() << cIndent 
+                            << F("PIN ") << _pin << F(": ") 
+                            << F("Device ") << i 
+                            << F(" using address ") << adr
                             << endl;
         }
       }
