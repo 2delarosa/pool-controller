@@ -52,7 +52,7 @@ private:
   * - thus MAX_NUM_SENSORS is required to allocate enough address containers
   * - could be passed as a class params, but having more than are used is not an issue
   */
-  DeviceAddress tempDeviceAddress[MAX_NUM_SENSORS];  
+  DeviceAddress deviceAddress[MAX_NUM_SENSORS];  
 
   bool _sensorFound = false;
 

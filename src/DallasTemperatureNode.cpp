@@ -71,8 +71,8 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
 
       for (uint8_t i = 0; i < numberOfDevices; i++) {
         // Load the address list sequence
-        if (sensor->getAddress(tempDeviceAddress[i], i)) {
-          String adr = address2String(tempDeviceAddress[i]);
+        if (sensor->getAddress(deviceAddress[i], i)) {
+          String adr = address2String(deviceAddress[i]);
           Homie.getLogger() << cIndent << F("PIN ") << _pin << F(": ") << F("Device ") << i << F(" using address ") << adr
                             << endl;
         }
@@ -95,13 +95,13 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
         sensor->requestTemperatures();  // Send the command to get temperature readings
         for (uint8_t i = 0; i < numberOfDevices; i++) {
 
-          if ( sensor->validAddress(tempDeviceAddress[i]) ) {  // make sure we have an address
+          if ( sensor->validAddress(deviceAddress[i]) ) {  // make sure we have an address
             sensorRange.index = i;
-            _temperature           = sensor->getTempF(tempDeviceAddress[i]);  // Changed getTempC to getTempF
+            _temperature           = sensor->getTempF(deviceAddress[i]);  // Changed getTempC to getTempF
             if (DEVICE_DISCONNECTED_C == _temperature) {
               Homie.getLogger() << cIndent
                                 << F("✖ Error reading sensor") 
-                                << address2String(tempDeviceAddress[i]) 
+                                << address2String(deviceAddress[i]) 
                                 << ". Request count: " << i
                                 << endl;
 
@@ -111,7 +111,7 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
                                 << F("Temperature=") 
                                 << _temperature
                                 << "for address=" 
-                                << address2String(tempDeviceAddress[i]) 
+                                << address2String(deviceAddress[i]) 
                                 << endl;
 
               if (isRange()) {
