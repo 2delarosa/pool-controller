@@ -30,6 +30,9 @@ const uint8_t PIN_RELAY_POOL  = 18;
 const uint8_t PIN_RELAY_SOLAR = 19;
 #elif defined(ESP8266)
 
+const uint8_t DTN_RANGE_LOWER = 0;
+const uint8_t DTN_RANGE_UPPER = 3;
+
 // see: https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
 const uint8_t PIN_DS_SOLAR = D3;  // Pin of Temp-Sensor Solar
 const uint8_t PIN_DS_POOL  = D4;  // Pin of Temp-Sensor Pool
@@ -57,7 +60,7 @@ HomieSetting<const char*> operationModeSetting("operation-mode", "Operational Mo
 LoggerNode LN;
 
 DallasTemperatureNode solarTemperatureNode("solar-temp", "Solar Temperature", PIN_DS_SOLAR, TEMP_READ_INTERVALL);
-DallasTemperatureNode poolTemperatureNode("pool-temp", "Pool Temperature", PIN_DS_POOL, TEMP_READ_INTERVALL);
+DallasTemperatureNode poolTemperatureNode("poolTemp[]", "Pool Temperature", PIN_DS_POOL, TEMP_READ_INTERVALL, true, DTN_RANGE_LOWER, DTN_RANGE_UPPER);
 
 #ifdef ESP32
 ESP32TemperatureNode ctrlTemperatureNode("controller-temp", "Controller Temperature", TEMP_READ_INTERVALL);

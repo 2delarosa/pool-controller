@@ -20,127 +20,141 @@
 
 DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval)
     : HomieNode(id, name, "temperature") {
+  classInitializer(id, name, pin, measurementInterval, false, 0, 0);
+}
 
-  _pin                 = pin;
-  _measurementInterval = (measurementInterval > MIN_INTERVAL) ? measurementInterval : MIN_INTERVAL;
-  _lastMeasurement     = 0;
-
-  oneWire = new OneWire(_pin);
-  sensor  = new DallasTemperature(oneWire);
+DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval,
+                                             bool range, uint16_t lower, uint16_t upper)
+    : HomieNode(id, name, "temperature", range, lower, upper) {
+  classInitializer(id, name, pin, measurementInterval, range, lower, upper);
 }
 
 /**
  *
  */
-void DallasTemperatureNode::setup() {
+void DallasTemperatureNode::classInitializer(const char* id, const char* name, const uint8_t pin, const int measurementInterval, bool range, uint16_t lower, uint16_t upper) {
+  _pin                 = pin;
+  _measurementInterval = (measurementInterval > MIN_INTERVAL) ? measurementInterval : MIN_INTERVAL;
+  _lastMeasurement     = 0;
+  _rangeCount          = upper - lower;
 
-  advertise(cHomieNodeState).setName(cHomieNodeStateName);
-  advertise(cTemperature).setName(cTemperatureName).setDatatype("float").setUnit(cTemperatureUnit);
+  oneWire = new OneWire(_pin);
+  sensor  = new DallasTemperature(oneWire);
 
   // Start up the library
   sensor->begin();
+
   // set global resolution to 9, 10, 11, or 12 bits
   //sensor->setResolution(12);
 }
 
 /**
- *
+ * Called by Homie when Homie.setup() is called; Once!
  */
-void DallasTemperatureNode::onReadyToOperate() {
+  void DallasTemperatureNode::setup() {
+    advertise(cHomieNodeState).setName(cHomieNodeStateName);
+    advertise(cTemperature).setName(cTemperatureRangeName).setDatatype("float").setUnit(cTemperatureUnit);
 
-  // Grab a count of devices on the wire
-  numberOfDevices = sensor->getDeviceCount();
-  // report parasite power requirements
-  Homie.getLogger() << cIndent << F("Parasite power is: ") << sensor->isParasitePowerMode() << endl;
-
-  if (numberOfDevices > 0) {
-    Homie.getLogger() << cIndent << numberOfDevices << F(" devices found on PIN ") << _pin << endl;
-
-    for (uint8_t i = 0; i < numberOfDevices; i++) {
-      // Search the wire for address
-      DeviceAddress tempDeviceAddress;  // We'll use this variable to store a found device address
-
-      if (sensor->getAddress(tempDeviceAddress, i)) {
-        String adr = address2String(tempDeviceAddress);
-        Homie.getLogger() << cIndent << F("PIN ") << _pin << F(": ") << F("Device ") << i << F(" using address ") << adr << endl;
-      }
-    }
-  } else {
-    Homie.getLogger() << F("✖ No sensors found on pin ") << _pin << endl;
-    if(Homie.isConnected()) {
-      setProperty(cHomieNodeState).send(cHomieNodeState_Error);
-    }
+    initializeSensors();
   }
-}
 
 /**
- *
+ * Called by Class Constructors
  */
-void DallasTemperatureNode::loop() {
-  if (millis() - _lastMeasurement >= _measurementInterval * 1000UL || _lastMeasurement == 0) {
-    _lastMeasurement = millis();
+  void DallasTemperatureNode::initializeSensors() {
+
+    // Grab a count of devices on the wire
+    numberOfDevices = sensor->getDeviceCount();
+    if (numberOfDevices > MAX_NUM_SENSORS || (isRange() && (numberOfDevices > _rangeCount))) {
+      numberOfDevices = MAX_NUM_SENSORS;
+    }
+
+    // report parasite power requirements
+    Homie.getLogger() << cIndent << F("Parasite power is: ") << sensor->isParasitePowerMode() << endl;
 
     if (numberOfDevices > 0) {
-      Homie.getLogger() << F("〽 Sending Temperature: ") << getId() << endl;
-      // call sensors.requestTemperatures() to issue a global temperature
-      // request to all devices on the bus
-      sensor->requestTemperatures();  // Send the command to get temperature readings
+      Homie.getLogger() << cIndent << numberOfDevices << F(" devices found on PIN ") << _pin << endl;
+
       for (uint8_t i = 0; i < numberOfDevices; i++) {
-        uint8_t cnt = 0;
+        // Load the address list sequence
+        if (sensor->getAddress(tempDeviceAddress[i], i)) {
+          String adr = address2String(tempDeviceAddress[i]);
+          Homie.getLogger() << cIndent << F("PIN ") << _pin << F(": ") << F("Device ") << i << F(" using address ") << adr
+                            << endl;
+        }
+      }
+    }
+  }
 
-        DeviceAddress tempDeviceAddress;
-        if (sensor->getAddress(tempDeviceAddress, i)) {
+/**
+ * Called by Homie when homie is connected and in run mode
+ */
+  void DallasTemperatureNode::loop() {
+    if (millis() - _lastMeasurement >= _measurementInterval * 1000UL || _lastMeasurement == 0) {
+      _lastMeasurement = millis();
 
-          _temperature = sensor->getTempF(tempDeviceAddress); // Changed getTempC to getTempF
-          if (DEVICE_DISCONNECTED_C == _temperature) {
-            Homie.getLogger() << cIndent << F("✖ Error reading sensor. Request count: ") << cnt << endl;
-            if(Homie.isConnected()) {
+      if (numberOfDevices > 0) {
+        Homie.getLogger() << F("〽 Sending Temperature: ") << getId() << endl;
+        HomieRange sensorRangeIndex = {true, 0};
+        // call sensors.requestTemperatures() to issue a global temperature
+        // request to all devices on the bus
+        sensor->requestTemperatures();  // Send the command to get temperature readings
+        for (uint8_t i = 0; i < numberOfDevices; i++) {
+
+          if (tempDeviceAddress[i][0] != 0) {  // make sure we have an address
+            sensorRangeIndex.index = i;
+            _temperature           = sensor->getTempF(tempDeviceAddress[i]);  // Changed getTempC to getTempF
+            if (DEVICE_DISCONNECTED_C == _temperature) {
+              Homie.getLogger() << cIndent
+                                << F("✖ Error reading sensor") 
+                                << address2String(tempDeviceAddress[i]) 
+                                << ". Request count: " << i
+                                << endl;
+
               setProperty(cHomieNodeState).send(cHomieNodeState_Error);
-            }
-          } else {
-            Homie.getLogger() << cIndent << F("Temperature=") << _temperature << endl;
+            } else {
+              Homie.getLogger() << cIndent 
+                                << F("Temperature=") 
+                                << _temperature
+                                << "for address=" 
+                                << address2String(tempDeviceAddress[i]) 
+                                << endl;
 
-            if(Homie.isConnected()) {
-              setProperty(cTemperature).send(String(_temperature));
+              setProperty(cTemperature).setRange(sensorRangeIndex).send(String(_temperature));
+
               setProperty(cHomieNodeState).send(cHomieNodeState_OK);
             }
           }
         }
+      } else {
 
-      }
-    } else {
-
-      Homie.getLogger() << F("No Sensor found!") << endl;
-      if(Homie.isConnected()) {
+        Homie.getLogger() << F("No Sensor found!") << endl;
         setProperty(cHomieNodeState).send(cHomieNodeState_Error);
+        //re-init
+        initializeSensors();
       }
-      //retry to get
-      numberOfDevices = sensor->getDeviceCount();
     }
   }
-}
 
-/**
+  /**
  *
  */
-void DallasTemperatureNode::printCaption() {
-  Homie.getLogger() << cCaption << endl;
-}
+  void DallasTemperatureNode::printCaption() { Homie.getLogger() << cCaption << endl; }
 
-/**
+  /**
  *
  */
-String DallasTemperatureNode::address2String(const DeviceAddress deviceAddress) {
-  String adr;
+  String DallasTemperatureNode::address2String(const DeviceAddress deviceAddress) {
+    String adr;
 
-  for (uint8_t i = 0; i < 8; i++) {
-    // zero pad the address if necessary
+    for (uint8_t i = 0; i < 8; i++) {
+      // zero pad the address if necessary
 
-    if (deviceAddress[i] < 16) {
-      adr = adr + F("0");
+      if (deviceAddress[i] < 16) {
+        adr = adr + F("0");
+      }
+      adr = adr + String(deviceAddress[i], HEX);
     }
-    adr = adr + String(deviceAddress[i], HEX);
-  }
 
-  return adr;
-}
+    return adr;
+  }

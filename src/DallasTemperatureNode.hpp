@@ -12,8 +12,8 @@
 class DallasTemperatureNode : public HomieNode {
 
 public:
-  DallasTemperatureNode(const char* id, const char* name, const uint8_t pin,
-                        const int measurementInterval = MEASUREMENT_INTERVAL);
+  DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval);
+  DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval, bool range, uint16_t lower, uint16_t upper);
 
   uint8_t       getPin() const { return _pin; }
   void          setMeasurementInterval(unsigned long interval) { _measurementInterval = interval; }
@@ -23,10 +23,10 @@ public:
 protected:
   void setup() override;
   void loop() override;
-  void onReadyToOperate() override;
-
+  
 private:
   // suggested rate is 1/60Hz (1m)
+  static const uint8_t MAX_NUM_SENSORS  = 4;   // Total number of Sensors
   static const int MIN_INTERVAL         = 60;  // in seconds
   static const int MEASUREMENT_INTERVAL = 300;
 
@@ -34,6 +34,7 @@ private:
   const char* cIndent  = "  ◦ ";
 
   const char* cTemperature     = "temperature";
+  const char* cTemperatureRangeName = "temperature[]";
   const char* cTemperatureName = "Temperature";
   const char* cTemperatureUnit = "°F";
 
@@ -42,19 +43,22 @@ private:
 
   const char* cHomieNodeState_OK    = "OK";
   const char* cHomieNodeState_Error = "Error";
+  DeviceAddress tempDeviceAddress[MAX_NUM_SENSORS];  // We'll use this variable to store a found device address
 
   bool _sensorFound = false;
 
   uint8_t       _pin;
   unsigned long _measurementInterval;
   unsigned long _lastMeasurement;
-
+  int _rangeCount;
   float _temperature = NAN;
 
   OneWire*           oneWire;
   DallasTemperature* sensor;
   uint8_t            numberOfDevices;  // Number of temperature devices found
 
+  void   classInitializer(const char* id, const char* name, const uint8_t pin, const int measurementInterval, bool range, uint16_t lower, uint16_t upper);
+  void   initializeSensors();
   void   printCaption();
   String address2String(const DeviceAddress deviceAddress);
 };
