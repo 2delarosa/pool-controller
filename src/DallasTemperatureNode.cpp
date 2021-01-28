@@ -59,13 +59,16 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
  */
   void DallasTemperatureNode::initializeSensors() {
     // Grab a count of devices on the wire
-    // Constrain count to range, if range
     numberOfDevices = sensor->getDeviceCount();
-    if (numberOfDevices > MAX_NUM_SENSORS) {
-      numberOfDevices = MAX_NUM_SENSORS;
-    }
+
+    // Constrain count to range, if range
     if ((numberOfDevices > 0) && isRange() && (numberOfDevices > _rangeCount)) {
       numberOfDevices = _rangeCount;
+    }
+
+    // Constrain count to Address Containers in every case
+    if (numberOfDevices > MAX_NUM_SENSORS) {
+      numberOfDevices = MAX_NUM_SENSORS;
     }
 
     // report parasite power requirements
