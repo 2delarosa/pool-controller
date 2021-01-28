@@ -20,19 +20,19 @@
 
 DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval)
     : HomieNode(id, name, "temperature") {
-  classInitializer(id, name, pin, measurementInterval, false, 0, 0);
+  classInitializer(pin, measurementInterval, false, 0, 0);
 }
 
 DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval,
                                              bool range, uint16_t lower, uint16_t upper)
     : HomieNode(id, name, "temperature", range, lower, upper) {
-  classInitializer(id, name, pin, measurementInterval, range, lower, upper);
+  classInitializer(pin, measurementInterval, range, lower, upper);
 }
 
 /**
  *
  */
-void DallasTemperatureNode::classInitializer(const char* id, const char* name, const uint8_t pin, const int measurementInterval, bool range, uint16_t lower, uint16_t upper) {
+void DallasTemperatureNode::classInitializer(const uint8_t pin, const int measurementInterval, bool range, uint16_t lower, uint16_t upper) {
   _pin                 = pin;
   _measurementInterval = (measurementInterval > MIN_INTERVAL) ? measurementInterval : MIN_INTERVAL;
   _lastMeasurement     = 0;
@@ -53,8 +53,11 @@ void DallasTemperatureNode::classInitializer(const char* id, const char* name, c
  */
   void DallasTemperatureNode::setup() {
     advertise(cHomieNodeState).setName(cHomieNodeStateName);
-    advertise(cTemperature).setName(cTemperatureRangeName).setDatatype("float").setUnit(cTemperatureUnit);
-
+    if (isRange()) {
+      advertise(cTemperature).setName(cTemperatureRangeName).setDatatype("float").setUnit(cTemperatureUnit);
+    } else {
+      advertise(cTemperature).setName(cTemperatureName).setDatatype("float").setUnit(cTemperatureUnit);
+    }
     initializeSensors();
   }
 
@@ -120,10 +123,13 @@ void DallasTemperatureNode::classInitializer(const char* id, const char* name, c
                                 << address2String(tempDeviceAddress[i]) 
                                 << endl;
 
-              setProperty(cTemperature).setRange(sensorRangeIndex).send(String(_temperature));
-
-              setProperty(cHomieNodeState).send(cHomieNodeState_OK);
-            }
+              if (isRange()) {
+                setProperty(cTemperature).setRange(sensorRangeIndex).send(String(_temperature));
+              }else {
+                setProperty(cTemperature).send(String(_temperature));
+              }
+                setProperty(cHomieNodeState).send(cHomieNodeState_OK);
+              }
           }
         }
       } else {

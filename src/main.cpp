@@ -60,7 +60,7 @@ HomieSetting<const char*> operationModeSetting("operation-mode", "Operational Mo
 LoggerNode LN;
 
 DallasTemperatureNode solarTemperatureNode("solar-temp", "Solar Temperature", PIN_DS_SOLAR, TEMP_READ_INTERVALL);
-DallasTemperatureNode poolTemperatureNode("poolTemp[]", "Pool Temperature", PIN_DS_POOL, TEMP_READ_INTERVALL, true, DTN_RANGE_LOWER, DTN_RANGE_UPPER);
+DallasTemperatureNode poolTemperatureNode("pool-temp", "Pool Temperature", PIN_DS_POOL, TEMP_READ_INTERVALL, true, DTN_RANGE_LOWER, DTN_RANGE_UPPER);
 
 #ifdef ESP32
 ESP32TemperatureNode ctrlTemperatureNode("controller-temp", "Controller Temperature", TEMP_READ_INTERVALL);

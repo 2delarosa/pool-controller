@@ -34,7 +34,7 @@ private:
   const char* cIndent  = "  ◦ ";
 
   const char* cTemperature     = "temperature";
-  const char* cTemperatureRangeName = "temperature[]";
+  const char* cTemperatureRangeName = "Temperature[]";
   const char* cTemperatureName = "Temperature";
   const char* cTemperatureUnit = "°F";
 
@@ -57,7 +57,7 @@ private:
   DallasTemperature* sensor;
   uint8_t            numberOfDevices;  // Number of temperature devices found
 
-  void   classInitializer(const char* id, const char* name, const uint8_t pin, const int measurementInterval, bool range, uint16_t lower, uint16_t upper);
+  void   classInitializer(const uint8_t pin, const int measurementInterval, bool range, uint16_t lower, uint16_t upper);
   void   initializeSensors();
   void   printCaption();
   String address2String(const DeviceAddress deviceAddress);
