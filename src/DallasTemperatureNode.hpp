@@ -12,9 +12,9 @@
 class DallasTemperatureNode : public HomieNode {
 
 public:
-  DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval);
   DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval, bool range, uint16_t lower, uint16_t upper);
-
+  DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval);
+  
   uint8_t       getPin() const { return _pin; }
   void          setMeasurementInterval(unsigned long interval) { _measurementInterval = interval; }
   unsigned long getMeasurementInterval() const { return _measurementInterval; }
@@ -45,7 +45,14 @@ private:
 
   const char* cHomieNodeState_OK    = "OK";
   const char* cHomieNodeState_Error = "Error";
-  DeviceAddress tempDeviceAddress[MAX_NUM_SENSORS];  // We'll use this variable to store a found device address
+  
+  /*
+  * We'll use this variable to store a found device address
+  * Can only initialize it once as definition; 
+  * - thus MAX_NUM_SENSORS is required to allocate enough address containers
+  * - could be passed as a class params, but having more than are used is not an issue
+  */
+  DeviceAddress tempDeviceAddress[MAX_NUM_SENSORS];  
 
   bool _sensorFound = false;
 
@@ -59,7 +66,6 @@ private:
   DallasTemperature* sensor;
   uint8_t            numberOfDevices;  // Number of temperature devices found
 
-  void   classInitializer(const uint8_t pin, const int measurementInterval, bool range, uint16_t lower, uint16_t upper);
   void   initializeSensors();
   void   printCaption();
   String address2String(const DeviceAddress deviceAddress);

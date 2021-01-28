@@ -18,21 +18,13 @@
  */
 #include "DallasTemperatureNode.hpp"
 
-DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval)
-    : HomieNode(id, name, "temperature") {
-  classInitializer(pin, measurementInterval, false, 0, 0);
+DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval)    
+    : DallasTemperatureNode(id, name, pin, measurementInterval, false, 0U, 0U) {
 }
 
 DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval,
                                              bool range, uint16_t lower, uint16_t upper)
     : HomieNode(id, name, "temperature", range, lower, upper) {
-  classInitializer(pin, measurementInterval, range, lower, upper);
-}
-
-/**
- *
- */
-void DallasTemperatureNode::classInitializer(const uint8_t pin, const int measurementInterval, bool range, uint16_t lower, uint16_t upper) {
   _pin                 = pin;
   _measurementInterval = (measurementInterval > MIN_INTERVAL) ? measurementInterval : MIN_INTERVAL;
   _lastMeasurement     = 0;
@@ -51,7 +43,7 @@ void DallasTemperatureNode::classInitializer(const uint8_t pin, const int measur
 /**
  * Called by Homie when Homie.setup() is called; Once!
  */
-  void DallasTemperatureNode::setup() {
+  void DallasTemperatureNode::setup() {    
     advertise(cHomieNodeState).setName(cHomieNodeStateName);
     if (isRange()) {
       advertise(cTemperature).setName(cTemperatureRangeName).setDatatype("float").setUnit(cTemperatureUnit);
@@ -65,7 +57,6 @@ void DallasTemperatureNode::classInitializer(const uint8_t pin, const int measur
  * Called by Class Constructors
  */
   void DallasTemperatureNode::initializeSensors() {
-
     // Grab a count of devices on the wire
     numberOfDevices = sensor->getDeviceCount();
     if (numberOfDevices > MAX_NUM_SENSORS) {
@@ -98,14 +89,14 @@ void DallasTemperatureNode::classInitializer(const uint8_t pin, const int measur
 
       if (numberOfDevices > 0) {
         Homie.getLogger() << F("〽 Sending Temperature: ") << getId() << endl;
-        HomieRange sensorRangeIndex = {true, 0};
+        HomieRange sensorRange = {true, 0};
         // call sensors.requestTemperatures() to issue a global temperature
         // request to all devices on the bus
         sensor->requestTemperatures();  // Send the command to get temperature readings
         for (uint8_t i = 0; i < numberOfDevices; i++) {
 
-          if (tempDeviceAddress[i][0] != 0) {  // make sure we have an address
-            sensorRangeIndex.index = i;
+          if ( sensor->validAddress(tempDeviceAddress[i]) ) {  // make sure we have an address
+            sensorRange.index = i;
             _temperature           = sensor->getTempF(tempDeviceAddress[i]);  // Changed getTempC to getTempF
             if (DEVICE_DISCONNECTED_C == _temperature) {
               Homie.getLogger() << cIndent
@@ -124,7 +115,7 @@ void DallasTemperatureNode::classInitializer(const uint8_t pin, const int measur
                                 << endl;
 
               if (isRange()) {
-                setProperty(cTemperature).setRange(sensorRangeIndex).send(String(_temperature));
+                setProperty(cTemperature).setRange(sensorRange).send(String(_temperature));
               }else {
                 setProperty(cTemperature).send(String(_temperature));
               }
