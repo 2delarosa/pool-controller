@@ -26,7 +26,7 @@ protected:
   
 private:
   // Total number of Sensors
-  static const uint8_t MAX_NUM_SENSORS = 4;  
+  static const uint8_t MAX_NUM_SENSORS = 12;  
 
   // suggested rate is 1/60Hz (1m)
   static const int MIN_INTERVAL         = 60;  // in seconds
@@ -36,7 +36,6 @@ private:
   const char* cIndent  = "  ◦ ";
 
   const char* cTemperature     = "temperature";
-  const char* cTemperatureRangeName = "Temperature[]";
   const char* cTemperatureName = "Temperature";
   const char* cTemperatureUnit = "°F";
 

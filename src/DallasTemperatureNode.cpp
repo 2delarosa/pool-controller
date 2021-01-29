@@ -28,7 +28,7 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
   _pin                 = pin;
   _measurementInterval = (measurementInterval > MIN_INTERVAL) ? measurementInterval : MIN_INTERVAL;
   _lastMeasurement     = 0;
-  _rangeCount          = upper - lower;
+  _rangeCount          = 1 + (upper - lower);
 
   oneWire = new OneWire(_pin);
   sensor  = new DallasTemperature(oneWire);
@@ -37,19 +37,16 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
   sensor->begin();
 
   // set global resolution to 9, 10, 11, or 12 bits
-  //sensor->setResolution(12);
+  sensor->setResolution(12);
 }
 
 /**
  * Called by Homie when Homie.setup() is called; Once!
  */
-  void DallasTemperatureNode::setup() {    
-    advertise(cHomieNodeState).setName(cHomieNodeStateName);
-    if (isRange()) {
-      advertise(cTemperature).setName(cTemperatureRangeName).setDatatype("float").setUnit(cTemperatureUnit);
-    } else {
-      advertise(cTemperature).setName(cTemperatureName).setDatatype("float").setUnit(cTemperatureUnit);
-    }
+  void DallasTemperatureNode::setup() {
+    advertise(cHomieNodeState).setName(cHomieNodeStateName).setDatatype("string").setRetained(true);
+    advertise(cTemperature).setName(cTemperatureName).setDatatype("float").setUnit(cTemperatureUnit).setRetained(true);
+
     initializeSensors();
   }
 
@@ -97,10 +94,10 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
   void DallasTemperatureNode::loop() {
     if (millis() - _lastMeasurement >= _measurementInterval * 1000UL || _lastMeasurement == 0) {
       _lastMeasurement = millis();
+      HomieRange sensorRange = {true, 0};
 
       if (numberOfDevices > 0) {
-        Homie.getLogger() << F("〽 Sending Temperature: ") << getId() << endl;
-        HomieRange sensorRange = {true, 0};
+        Homie.getLogger() << F("〽 Sending Temperature: ") << getId() << endl;        
         // call sensors.requestTemperatures() to issue a global temperature
         // request to all devices on the bus
         sensor->requestTemperatures();  // Send the command to get temperature readings
@@ -109,35 +106,46 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
           if ( sensor->validAddress(deviceAddress[i]) ) {  // make sure we have an address
             sensorRange.index = i;
             _temperature           = sensor->getTempF(deviceAddress[i]);  // Changed getTempC to getTempF
-            if (DEVICE_DISCONNECTED_C == _temperature) {
+            if ((_temperature > 184.0) || (DEVICE_DISCONNECTED_F == _temperature)) 
+            {
               Homie.getLogger() << cIndent
                                 << F("✖ Error reading sensor") 
                                 << address2String(deviceAddress[i]) 
                                 << ". Request count: " << i
                                 << endl;
 
-              setProperty(cHomieNodeState).send(cHomieNodeState_Error);
+              if (isRange()) {
+                setProperty(cHomieNodeState).setRange(sensorRange).send(cHomieNodeState_Error);
+              } else {
+                setProperty(cHomieNodeState).send(cHomieNodeState_Error);
+              }
+
             } else {
               Homie.getLogger() << cIndent 
                                 << F("Temperature=") 
                                 << _temperature
-                                << "for address=" 
+                                << " for address=" 
                                 << address2String(deviceAddress[i]) 
                                 << endl;
 
               if (isRange()) {
+                setProperty(cHomieNodeState).setRange(sensorRange).send(cHomieNodeState_OK);
                 setProperty(cTemperature).setRange(sensorRange).send(String(_temperature));
-              }else {
+              } else {
+                setProperty(cHomieNodeState).send(cHomieNodeState_OK);
                 setProperty(cTemperature).send(String(_temperature));
               }
-                setProperty(cHomieNodeState).send(cHomieNodeState_OK);
-              }
+            }
           }
         }
       } else {
 
         Homie.getLogger() << F("No Sensor found!") << endl;
-        setProperty(cHomieNodeState).send(cHomieNodeState_Error);
+        if (isRange()) {
+          setProperty(cHomieNodeState).setRange(sensorRange).send(cHomieNodeState_Error);
+        } else {
+          setProperty(cHomieNodeState).send(cHomieNodeState_Error);
+        }
         //re-init
         initializeSensors();
       }
