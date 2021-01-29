@@ -59,8 +59,38 @@ HomieSetting<const char*> operationModeSetting("operation-mode", "Operational Mo
 
 LoggerNode LN;
 
+/*
+15:23:17.400 >   ◦ Temperature=74.97 for address=28e20b943c1901a3
+15:23:17.414 >   ◦ Temperature=75.43 for address=2866fc543c19015b
+15:23:17.427 >   ◦ Temperature=75.31 for address=28f957453c19013a
+15:23:17.440 >   ◦ Temperature=74.52 for address=28fd883f3c190164
+*/
+DallasProperties poolRequestUnKnown = {5, 
+  { //   add "" empty in the hex address field for as-is assignment           format: 28e20b943c1901a3
+    {0, "tempSucPool",   "Pool Suction Temp",  "tempSucPoolState",   "Pool Suction State",  ""},
+    {1, "tempRetPool",   "Pool Return Temp",   "tempRetPoolState",   "Pool Return State",   ""},
+    {2, "tempSucSpa",    "Pool Suction Temp",  "tempSucSpaState",    "Pool Suction State",  ""},
+    {3, "tempRetSpa",    "SPA Return Temp",    "tempRetSpaState",    "SPA Return State",    ""},
+    {4, "tempRetHeater", "Heater Return Temp", "tempRetHeaterState", "Heater Return State", ""}
+  }
+};
+
+DallasProperties poolRequest = {5, 
+  { //   add the hex addresses in the proper order for EVERY entry                   format: 28e20b943c1901a3
+    {0, "tempSucPool",   "Pool Suction Temp",  "tempSucPoolState",   "Pool Suction State",  "2866fc543c19015b"},
+    {1, "tempRetPool",   "Pool Return Temp",   "tempRetPoolState",   "Pool Return State",   "28f957453c19013a"},
+    {2, "tempSucSpa",    "Pool Suction Temp",  "tempSucSpaState",    "Pool Suction State",  "28e20b943c1901a3"},
+    {3, "tempRetSpa",    "SPA Return Temp",    "tempRetSpaState",    "SPA Return State",    "28fd883f3c190164"},
+    {4, "tempRetHeater", "Heater Return Temp", "tempRetHeaterState", "Heater Return State", "28f957453c19013a"}
+  }
+};
+
+
 DallasTemperatureNode solarTemperatureNode("solar-temp", "Solar Temperature", PIN_DS_SOLAR, TEMP_READ_INTERVALL);
-DallasTemperatureNode poolTemperatureNode("pool-temp", "Pool Temperature", PIN_DS_POOL, TEMP_READ_INTERVALL, true, DTN_RANGE_LOWER, DTN_RANGE_UPPER);
+
+DallasTemperatureNode poolTemperatureNode(&poolRequestUnKnown, "pool-temp", "Pool Temperature", PIN_DS_POOL, TEMP_READ_INTERVALL);  // Dynamic
+// DallasTemperatureNode poolTemperatureNode("pool-temp", "Pool Temperature", PIN_DS_POOL, TEMP_READ_INTERVALL); // JSON
+// DallasTemperatureNode poolTemperatureNode("pool-temp", "Pool Temperature", PIN_DS_POOL, TEMP_READ_INTERVALL, true, DTN_RANGE_LOWER, DTN_RANGE_UPPER); // HomieRange
 
 #ifdef ESP32
 ESP32TemperatureNode ctrlTemperatureNode("controller-temp", "Controller Temperature", TEMP_READ_INTERVALL);

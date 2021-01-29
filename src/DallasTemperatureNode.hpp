@@ -9,11 +9,29 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+// Configurable Request
+typedef struct __attribute__((packed)) _entry {
+  uint8_t index;
+  char property[32];
+  char propertyName[32];
+  char propertyState[32];
+  char propertyStateName[32];
+  char deviceAddressStr[24];
+  DeviceAddress deviceAddress;
+} DallasPropertyEntry, *pDallasPropertyEntry;
+
+typedef struct __attribute__((packed)) _container {
+  uint8_t entryCount;
+  DallasPropertyEntry entries[8];
+} DallasProperties, *pDallasProperties;
+
+
 class DallasTemperatureNode : public HomieNode {
 
 public:
   DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval, bool range, uint16_t lower, uint16_t upper);
   DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval);
+  DallasTemperatureNode(pDallasProperties request, const char *id, const char *name, const uint8_t pin, const int measurementInterval);
   
   uint8_t       getPin() const { return _pin; }
   void          setMeasurementInterval(unsigned long interval) { _measurementInterval = interval; }
@@ -45,6 +63,8 @@ private:
   const char* cHomieNodeState_OK    = "OK";
   const char* cHomieNodeState_Error = "Error";
   
+  pDallasProperties requestedProperties = NULL;
+
   /*
   * We'll use this variable to store a found device address
   * Can only initialize it once as definition; 
