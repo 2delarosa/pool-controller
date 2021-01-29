@@ -60,6 +60,7 @@ private:
   unsigned long _lastMeasurement;
   int _rangeCount;
   float _temperature = NAN;
+  char               chMessageBuffer[256];
 
   OneWire*           oneWire;
   DallasTemperature* sensor;
@@ -68,4 +69,5 @@ private:
   void   initializeSensors();
   void   printCaption();
   String address2String(const DeviceAddress deviceAddress);
+  String prepareNodeMessage(uint8_t idx, const char* stateValue, float tempValue);
 };
