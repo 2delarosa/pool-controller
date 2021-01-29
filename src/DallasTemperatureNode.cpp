@@ -45,7 +45,11 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
  */
   void DallasTemperatureNode::setup() {
     advertise(cHomieNodeState).setName(cHomieNodeStateName).setDatatype("string").setRetained(true);
-    advertise(cTemperature).setName(cTemperatureName).setDatatype("float").setUnit(cTemperatureUnit).setRetained(true);
+    if (isRange()) {
+      advertise(cTemperature).setName(cTemperatureName).setDatatype("float").setUnit(cTemperatureUnit).setRetained(true);
+    } else {
+      advertise(cTemperature).setName(cTemperatureName).setDatatype("string").setRetained(true);
+    }
 
     initializeSensors();
   }
