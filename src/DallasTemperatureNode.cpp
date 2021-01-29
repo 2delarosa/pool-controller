@@ -54,6 +54,7 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
     if(isRange()) {
       advertise(cHomieNodeState).setName(cHomieNodeStateName).setDatatype("string");
       advertise(cTemperature).setName(cTemperatureName).setDatatype("float").setUnit(cTemperatureUnit);
+
     } else if (NULL != requestedProperties) {
       for (uint8_t i = 0; i < requestedProperties->entryCount; i++) {
         advertise(requestedProperties->entries[i].propertyState)
@@ -64,6 +65,7 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
             .setDatatype("float")
             .setUnit(cTemperatureUnit);
       }
+
     } else {
       advertise(cHomieNodeState).setName(cHomieNodeStateName).setDatatype("string");
       advertise(cTemperature).setName(cTemperatureName).setDatatype("string");
@@ -98,20 +100,18 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
 
     if (numberOfDevices > 0) {
       Homie.getLogger() << cIndent << numberOfDevices << F(" devices found on PIN ") << _pin << endl;
-      String adr;
-
+      
       for (uint8_t i = 0; i < numberOfDevices; i++) {
         // Load the address list sequence
-        if (sensor->getAddress(deviceAddress[i], i)) {
-          adr = address2String(deviceAddress[i]);
-        }
 
         if (NULL != requestedProperties) {
           // load unless address was provided
           if ('\0' == requestedProperties->entries[i].deviceAddressStr[0]) {
+            sensor->getAddress(deviceAddress[i], i);
             HomieInternals::Helpers::byteArrayToHexString(deviceAddress[i], requestedProperties->entries[i].deviceAddressStr, sizeof(DeviceAddress));
           }
           HomieInternals::Helpers::hexStringToByteArray(requestedProperties->entries[i].deviceAddressStr, requestedProperties->entries[i].deviceAddress, sizeof(DeviceAddress));
+          HomieInternals::Helpers::hexStringToByteArray(requestedProperties->entries[i].deviceAddressStr, deviceAddress[i], sizeof(DeviceAddress));
 
           Homie.getLogger() << cIndent 
                           << F("PIN ") << _pin << F(": ") 
@@ -121,6 +121,8 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
                           << ", PropertyState Name: " << requestedProperties->entries[i].propertyState
                           << endl;
         } else {            
+          sensor->getAddress(deviceAddress[i], i);
+          String adr = address2String(deviceAddress[i]);
           Homie.getLogger() << cIndent 
                           << F("PIN ") << _pin << F(": ") 
                           << F("Device ") << i 
@@ -197,8 +199,24 @@ DallasTemperatureNode::DallasTemperatureNode(const char* id, const char* name, c
                 setProperty(cTemperature).send(prepareNodeMessage(sensorRange.index, NULL, _temperature));
               }
             }
-          } // if address is valid
-        }
+          } else { // if address is invalid
+              Homie.getLogger() << cIndent
+                                << F("✖ Error reading sensor") 
+                                << address2String(*workingAddress) 
+                                << ". Request count: " << i
+                                << ", Invalide Address!"
+                                << endl;
+              if (isRange())
+              {
+                setProperty(cHomieNodeState).setRange(sensorRange).send(cHomieNodeState_Address);
+              } else if (NULL != requestedProperties) {
+                  setProperty(requestedProperties->entries[i].propertyState)
+                    .send(cHomieNodeState_Address);
+              } else {
+                setProperty(cHomieNodeState).send(prepareNodeMessage(sensorRange.index, cHomieNodeState_Address, 0.0F));
+              }
+          }
+        } // loop end
       } else { // Node Failure with no devices
         Homie.getLogger() << F("No Sensor found!") << endl;
         setProperty("$state").send("alert");

@@ -62,7 +62,8 @@ private:
 
   const char* cHomieNodeState_OK    = "OK";
   const char* cHomieNodeState_Error = "Error";
-  
+  const char* cHomieNodeState_Address = "Invalid Address";
+
   pDallasProperties requestedProperties = NULL;
 
   /*
