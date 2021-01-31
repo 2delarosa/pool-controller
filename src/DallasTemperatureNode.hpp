@@ -29,10 +29,12 @@ typedef struct __attribute__((packed)) _container {
 class DallasTemperatureNode : public HomieNode {
 
 public:
-  DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval, bool range, uint16_t lower, uint16_t upper);
-  DallasTemperatureNode(const char* id, const char* name, const uint8_t pin, const int measurementInterval);
-  DallasTemperatureNode(pDallasProperties request, const char *id, const char *name, const uint8_t pin, const int measurementInterval);
-  
+  DallasTemperatureNode(const char* id, const char* name, const char* nType, const uint8_t pin, const int measurementInterval,
+                        bool range, uint16_t lower, uint16_t upper);
+  DallasTemperatureNode(const char* id, const char* name, const char* nType, const uint8_t pin, const int measurementInterval);
+  DallasTemperatureNode(pDallasProperties request, const char* id, const char* name, const char* nType, const uint8_t pin,
+                        const int measurementInterval);
+
   uint8_t       getPin() const { return _pin; }
   void          setMeasurementInterval(unsigned long interval) { _measurementInterval = interval; }
   unsigned long getMeasurementInterval() const { return _measurementInterval; }
@@ -59,10 +61,12 @@ private:
 
   const char* cHomieNodeState      = "state";
   const char* cHomieNodeStateName  = "State";
+  const char* cHomieNodeStateType   = "enum";
+  const char* cHomieNodeStateFormat = "OK,Error,InvalidAddress";
 
   const char* cHomieNodeState_OK    = "OK";
   const char* cHomieNodeState_Error = "Error";
-  const char* cHomieNodeState_Address = "Invalid Address";
+  const char* cHomieNodeState_Address = "InvalidAddress";
 
   pDallasProperties requestedProperties = NULL;
 
@@ -79,9 +83,9 @@ private:
   uint8_t       _pin;
   unsigned long _measurementInterval;
   unsigned long _lastMeasurement;
-  int _rangeCount;
-  float _temperature = NAN;
-  char               chMessageBuffer[256];
+  int           _rangeCount;
+  float         _temperature = NAN;
+  char          chMessageBuffer[256];
 
   OneWire*           oneWire;
   DallasTemperature* sensor;

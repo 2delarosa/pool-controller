@@ -85,12 +85,11 @@ DallasProperties poolRequest = {5,
   }
 };
 
+DallasTemperatureNode solarTemperatureNode("solar-temp", "Solar Temperature", "Ambient", PIN_DS_SOLAR, TEMP_READ_INTERVALL);
 
-DallasTemperatureNode solarTemperatureNode("solar-temp", "Solar Temperature", PIN_DS_SOLAR, TEMP_READ_INTERVALL);
-
-DallasTemperatureNode poolTemperatureNode(&poolRequestUnKnown, "pool-temp", "Pool Temperature", PIN_DS_POOL, TEMP_READ_INTERVALL);  // Dynamic
-// DallasTemperatureNode poolTemperatureNode("pool-temp", "Pool Temperature", PIN_DS_POOL, TEMP_READ_INTERVALL); // JSON
-// DallasTemperatureNode poolTemperatureNode("pool-temp", "Pool Temperature", PIN_DS_POOL, TEMP_READ_INTERVALL, true, DTN_RANGE_LOWER, DTN_RANGE_UPPER); // HomieRange
+DallasTemperatureNode poolTemperatureNode(&poolRequestUnKnown, "pool-temp", "Pool Temperature", "Ambient", PIN_DS_POOL, TEMP_READ_INTERVALL);  // Dynamic
+// DallasTemperatureNode poolTemperatureNode("pool-temp", "Pool Temperature", "Ambient", PIN_DS_POOL, TEMP_READ_INTERVALL); // JSON
+// DallasTemperatureNode poolTemperatureNode("pool-temp", "Pool Temperature", "Ambient", PIN_DS_POOL, TEMP_READ_INTERVALL, true, DTN_RANGE_LOWER, DTN_RANGE_UPPER); // HomieRange
 
 #ifdef ESP32
 ESP32TemperatureNode ctrlTemperatureNode("controller-temp", "Controller Temperature", TEMP_READ_INTERVALL);
