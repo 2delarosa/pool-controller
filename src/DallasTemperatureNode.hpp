@@ -12,10 +12,10 @@
 // Configurable Request
 typedef struct __attribute__((packed)) _entry {
   uint8_t index;
-  char property[32];
-  char propertyName[32];
-  char propertyState[32];
-  char propertyStateName[32];
+  char property[25];
+  char propertyName[25];
+  char propertyState[25];
+  char propertyStateName[25];
   char deviceAddressStr[24];
   DeviceAddress deviceAddress;
 } DallasPropertyEntry, *pDallasPropertyEntry;
