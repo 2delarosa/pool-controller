@@ -13,11 +13,14 @@ ContactNode::ContactNode(const char *id,
                          const int contactPin,
                          TContactCallback contactCallback,
                          const unsigned long measurementInterval)
-    : SensorNode(id, name, "Contact"),
-      _contactPin(contactPin),
-      _contactCallback(contactCallback),
-      _measurementInterval(measurementInterval)
+    : SensorNode(id, name, "Contact")
+//      _contactPin(contactPin),
+//      _contactCallback(contactCallback),
+//      _measurementInterval(measurementInterval)
 {
+  _contactPin = contactPin;
+  _contactCallback = contactCallback;
+  _measurementInterval = measurementInterval;
   asprintf(&_caption, cCaption, name, contactPin);
 }
 
