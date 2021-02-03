@@ -128,7 +128,7 @@ void setupHandler() {
   poolSuctionNode.setMeasurementInterval(_loopInterval);
   poolReturnNode.setMeasurementInterval(_loopInterval);
 
-//  contactNode.setMeasurementInterval(_loopInterval);
+  contactNode.setMeasurementInterval(_loopInterval);
 
 #ifdef ESP32
   ctrlTemperatureNode.setMeasurementInterval(_loopInterval);

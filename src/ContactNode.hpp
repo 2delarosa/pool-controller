@@ -18,12 +18,17 @@ class ContactNode : public SensorNode
 {
 public:
   typedef std::function<void(bool)> TContactCallback;
-  explicit ContactNode(const char *id, const char *name, const int contactPin = DEFAULTPIN, TContactCallback contactCallback = NULL);
+  ContactNode(const char *id, const char *name, const int contactPin = DEFAULTPIN, TContactCallback contactCallback = NULL, const unsigned long measurementInterval = MEASUREMENT_INTERVAL);
   void onChange(TContactCallback contactCallback);
+  void          setMeasurementInterval(unsigned long interval) { _measurementInterval = interval; }
+  unsigned long getMeasurementInterval() const { return _measurementInterval; }
 
 private:
   const char *cCaption = "• %s contact pin[%d]:";
-
+//  const unsigned long MIN_INTERVAL         = 60;  // in seconds
+  static const unsigned long MEASUREMENT_INTERVAL = 300;
+  unsigned long _measurementInterval;
+  unsigned long _lastMeasurement;
   int _contactPin;
   TContactCallback _contactCallback;
 

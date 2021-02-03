@@ -11,10 +11,12 @@
 ContactNode::ContactNode(const char *id,
                          const char *name,
                          const int contactPin,
-                         TContactCallback contactCallback)
+                         TContactCallback contactCallback,
+                         const unsigned long measurementInterval)
     : SensorNode(id, name, "Contact"),
       _contactPin(contactPin),
-      _contactCallback(contactCallback)
+      _contactCallback(contactCallback),
+      _measurementInterval(measurementInterval)
 {
   asprintf(&_caption, cCaption, name, contactPin);
 }
@@ -79,13 +81,17 @@ void ContactNode::onChange(TContactCallback contactCallback)
 
 void ContactNode::loop()
 {
-  if (_contactPin > DEFAULTPIN)
-  {
-    if (debouncePin() && (_lastSentState != _lastInputState))
+  if (millis() - _lastMeasurement >= _measurementInterval * 1000UL || _lastMeasurement == 0) {
+    _lastMeasurement = millis();
+    if (_contactPin > DEFAULTPIN)
     {
-      handleStateChange(_lastInputState == HIGH);
-      _lastSentState = _lastInputState;
+      if (debouncePin() && (_lastSentState != _lastInputState))
+      {
+        handleStateChange(_lastInputState == HIGH);
+        _lastSentState = _lastInputState;
+      }
     }
+    Homie.getLogger() << F("〽 Contact Status: ") << getId() << F(" switch: ") << (_lastSentState ? "open" : "closed") << endl;
   }
 }
 
