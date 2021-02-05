@@ -10,7 +10,7 @@
 
 **🏊 The Homie 3.0 compatible Smart Swimmingpool Controller 🎛️**
 
-Manage your swmming pool on the smart way to enjoy it in confortable and cheap (less than 100€) way.
+Adapted Stephan Strittmatter's (https://github.com/smart-swimmingpool/pool-controller) for my specific use.
 
 ## Main Features
 
@@ -18,14 +18,11 @@ Manage your swmming pool on the smart way to enjoy it in confortable and cheap (
 - [x] Independent of specific smarthome servers
   - [x] [openHAB](https://www.openhab.org) since Version 2.4 using MQTT Homie
   - [x] [Home Assistant](home-assistant.io) using MQTT Homie
+- [x] Can track up to five temperature sensors (Pool Suc/Ret, Spa Suc/Ret, Heater out)
+- [x] Added a contact node for a water flow reed switch.  
 - [x] Timesync via NTP (us.pool.ntp.org)
 - [x] Logging-Information via Homie-Node
-
-## Guides
-
-- [Users Guide](docs/users-guide.md)
-- [Hardware Guide](docs/hardware-guide.md)
-- [Software Guide](docs/software-guide.md)
+- [x] Disable automatic operation mode.  Default is manual operation
 
 ## Contributors
 
@@ -43,6 +40,8 @@ specification. Contributions of any kind welcome!
 
 ## Credits
 
+- Stephan Strittmatter (https://github.com/smart-swimmingpool/pool-controller)
+- James Scott Jr. who worked on the temperature and contact homienode sensors (skoona/HomieDallasTemperatureNode)
 - [Community of Homie-ESP8266](https://gitter.im/homie-iot/ESP8266)
 - [Lübbe Onken](http://github.com/luebbe) for `TimeClientHelper`
 - [Ian Hubbertz](https://github.com/euphi) for [HomieLoggerNode](https://github.com/euphi/HomieLoggerNode)
@@ -53,5 +52,5 @@ specification. Contributions of any kind welcome!
 
 ---
 
-DIY My Smart Home: (https://medium.com/diy-my-smart-home)
+Visit Stephan Strittmatter's DIY My Smart Home: (https://medium.com/diy-my-smart-home)
 # pool-controller
