@@ -41,7 +41,7 @@ specification. Contributions of any kind welcome!
 ## Credits
 
 - Stephan Strittmatter (https://github.com/smart-swimmingpool/pool-controller)
-- James Scott Jr. who worked on the temperature and contact homienode sensors (skoona/HomieDallasTemperatureNode)
+- James Scott Jr. who worked on the temperature and contact homienode sensors (https://github.com/skoona/HomieDallasTemperatureNode)
 - [Community of Homie-ESP8266](https://gitter.im/homie-iot/ESP8266)
 - [Lübbe Onken](http://github.com/luebbe) for `TimeClientHelper`
 - [Ian Hubbertz](https://github.com/euphi) for [HomieLoggerNode](https://github.com/euphi/HomieLoggerNode)
