@@ -25,15 +25,6 @@ Manage your swmming pool on the smart way to enjoy it in confortable and cheap (
 
 ## Planned Features
 
-- [ ] Configurable NTP Server (currently hardcoded: europe.pool.ntp.org)
-- [ ] be more smart: self learning for improved pool pump timed circulation for cleaning and heating
-- [ ] two separate circulation cycles
-- [ ] store configuration changes persistent on conroller
-- [ ] temperature based cleaning circulation time (colder == shorter, hotter == longer)
-- [ ] Improved sketch to work completly without WiFi connection
-      - Homie should run without WiFi connection
-      - enhance sketch using display and buttons to setup environment.
-- see also the [issue list](https://github.com/smart-swimmingpool/pool-controller/issues)
 
 ## Guides
 
